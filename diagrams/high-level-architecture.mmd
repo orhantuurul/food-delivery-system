@@ -1,0 +1,67 @@
+---
+config:
+  layout: elk
+---
+flowchart LR
+ subgraph Client["Client Applications"]
+        A["Mobile App"]
+  end
+ subgraph API["API Layer"]
+        B["API Gateway"]
+  end
+ subgraph Services["Microservices"]
+        C["User Service"]
+        D["Restaurant Service"]
+        E["Menu Service"]
+        F["Order Service"]
+        G["Payment Service"]
+        H["Courier Service"]
+        I["Notification Service"]
+  end
+ subgraph Realtime["Realtime Engine (Geo Search)"]
+        J[("Redis GEO / Elastic Geo")]
+  end
+ subgraph Async["Event Streaming"]
+        K[["Kafka Event Bus"]]
+  end
+ subgraph Databases["Databases"]
+        U[("PostgreSQL - Users")]
+        N[("PostgreSQL - Restaurants")]
+        M[("MongoDB - Menus")]
+        L[("PostgreSQL - Orders")]
+        P[("PostgreSQL - Payments")]
+        O[("Redis/DynamoDB - Courier Locations")]
+  end
+    A --> B
+    B --> C & D & E & F & G & H
+    C --> U
+    D --> N
+    E --> M
+    F --> L
+    G --> P
+    H --> O & J
+    F -- order_created --> K
+    G -- payment_success --> K
+    H -- courier_assigned --> K
+    D -- restaurant_accepts --> K
+    K --> I
+     A:::svc
+     B:::svc
+     C:::svc
+     D:::svc
+     E:::svc
+     F:::svc
+     G:::svc
+     H:::svc
+     I:::svc
+     J:::infra
+     K:::infra
+     U:::db
+     N:::db
+     M:::db
+     L:::db
+     P:::db
+     O:::db
+    classDef svc fill:#fff,stroke:#222,stroke-width:1px,rx:6px,ry:6px
+    classDef db fill:#e8f0ff,stroke:#222,stroke-width:1px,rx:6px,ry:6px
+    classDef infra fill:#fff7d6,stroke:#222,stroke-width:1px,rx:6px,ry:6px

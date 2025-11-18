@@ -1,0 +1,25 @@
+sequenceDiagram
+    autonumber
+    participant App as Mobile App
+    participant API as API Gateway
+    participant OS as Order Service
+    participant PS as Payment Service
+    participant RS as Restaurant Service
+    participant CS as Courier Service
+    participant ES as Kafka Event Bus
+    participant NS as Notification Service
+
+    App->>API: Create Order Request
+    API->>OS: Validate & Initialize Order
+    OS->>PS: Charge Payment
+    PS-->>OS: Payment Success
+
+    OS->>ES: Publish order_created event
+    ES->>RS: new_order event
+    RS-->>ES: restaurant_accepts event
+
+    ES->>CS: assign_courier event
+    CS-->>ES: courier_assigned event
+
+    ES->>NS: Push status update events
+    NS-->>App: Notifications (Accepted, Assigned, Delivered)
